@@ -21,70 +21,69 @@ package org.apache.maven.index.archetype;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.maven.archetype.catalog.ArchetypeCatalog;
-import org.apache.maven.archetype.source.ArchetypeDataSource;
 import org.apache.maven.index.AbstractIndexCreatorHelper;
-import org.apache.maven.index.NexusIndexer;
+import org.apache.maven.index.Indexer;
 import org.apache.maven.index.context.IndexingContext;
-import org.apache.maven.index.context.UnsupportedExistingLuceneIndexException;
 
 public class NexusArchetypeDataSourceTest
     extends AbstractIndexCreatorHelper
 {
     private IndexingContext context;
 
-    private NexusIndexer nexusIndexer;
+    private Indexer nexusIndexer;
 
     // private IndexUpdater indexUpdater;
 
-    private NexusArchetypeDataSource nexusArchetypeDataSource;
+    private AbstractArchetypeDataSource nexusArchetypeDataSource;
 
     protected void setUp()
         throws Exception
     {
         super.setUp();
 
-        prepare( true );
+        prepare();
     }
 
-    private void prepare( boolean inRam )
-        throws Exception, IOException, UnsupportedExistingLuceneIndexException
+    private void prepare()
+        throws Exception
     {
-        nexusIndexer = lookup( NexusIndexer.class );
-
-        // indexUpdater = lookup( IndexUpdater.class );
+        nexusIndexer = lookup( Indexer.class );
 
         Directory indexDir = null;
 
-        if ( inRam )
-        {
-            indexDir = new RAMDirectory();
-        }
-        else
-        {
             File indexDirFile = super.getDirectory( "index/test" );
 
             super.deleteDirectory( indexDirFile );
 
             indexDir = FSDirectory.open( indexDirFile );
-        }
 
         File repo = new File( getBasedir(), "src/test/repo" );
 
         context =
-            nexusIndexer.addIndexingContext( "test", "public", repo, indexDir,
-                "http://repository.sonatype.org/content/groups/public/", null, DEFAULT_CREATORS );
+            nexusIndexer.createIndexingContext( "test", "public", repo, indexDir,
+                                                "http://repository.sonatype.org/content/groups/public/", null,
+                                                true, true, DEFAULT_CREATORS );
         nexusIndexer.scan( context );
 
         // to update, uncomment this
         // IndexUpdateRequest updateRequest = new IndexUpdateRequest( context );
         // indexUpdater.fetchAndUpdateIndex( updateRequest );
 
-        nexusArchetypeDataSource = (NexusArchetypeDataSource) lookup( ArchetypeDataSource.class, "nexus" );
+        nexusArchetypeDataSource = new AbstractArchetypeDataSource(nexusIndexer)
+        {
+            @Override
+            protected List<IndexingContext> getIndexingContexts()
+            {
+                return Collections.singletonList(context);
+            }
+        };
     }
 
     public void testArchetype()

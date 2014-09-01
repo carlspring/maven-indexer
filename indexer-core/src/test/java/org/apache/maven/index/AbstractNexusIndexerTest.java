@@ -19,25 +19,18 @@ package org.apache.maven.index;
  * under the License.
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.FlatSearchRequest;
-import org.apache.maven.index.FlatSearchResponse;
-import org.apache.maven.index.NexusIndexer;
 import org.apache.maven.index.context.IndexingContext;
 
 public abstract class AbstractNexusIndexerTest
     extends AbstractIndexCreatorHelper
 {
-    protected NexusIndexer nexusIndexer;
+    protected Indexer nexusIndexer;
 
     protected Directory indexDir = new RAMDirectory();
 
@@ -50,7 +43,7 @@ public abstract class AbstractNexusIndexerTest
 //        indexDir = new SimpleFSDirectory(new File("/tmp/nexus-test"));
         super.setUp();
         // FileUtils.deleteDirectory( indexDir );
-        nexusIndexer = lookup( NexusIndexer.class );
+        nexusIndexer = lookup( Indexer.class );
         prepareNexusIndexer( nexusIndexer );
     }
 
@@ -64,10 +57,10 @@ public abstract class AbstractNexusIndexerTest
         // FileUtils.deleteDirectory( indexDir );
     }
 
-    protected abstract void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected abstract void prepareNexusIndexer( Indexer nexusIndexer )
         throws Exception;
 
-    protected void unprepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void unprepareNexusIndexer( Indexer nexusIndexer )
         throws Exception
     {
         nexusIndexer.removeIndexingContext( context, false );

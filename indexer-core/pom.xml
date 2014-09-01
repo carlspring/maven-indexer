@@ -125,10 +125,10 @@ under the License.
       <optional>true</optional>
     </dependency>
 
-    <!-- Using org.apache.maven.archetype.source.ArchetypeDataSource from it only -->
+    <!-- Using for ArchetypeDataSource support class -->
     <dependency>
       <groupId>org.apache.maven.archetype</groupId>
-      <artifactId>archetype-common</artifactId>
+      <artifactId>archetype-catalog</artifactId>
       <optional>true</optional>
     </dependency>
 
