@@ -33,11 +33,11 @@ public class Nexus3881NexusIndexerTest
     protected File repo = new File( getBasedir(), "src/test/nexus-3881" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareNexusIndexer( Indexer nexusIndexer )
         throws Exception
     {
         context =
-            nexusIndexer.addIndexingContext( "nexus-3881", "nexus-3881", repo, indexDir, null, null, DEFAULT_CREATORS );
+            nexusIndexer.createIndexingContext( "nexus-3881", "nexus-3881", repo, indexDir, null, null, DEFAULT_CREATORS );
         nexusIndexer.scan( context );
     }
 

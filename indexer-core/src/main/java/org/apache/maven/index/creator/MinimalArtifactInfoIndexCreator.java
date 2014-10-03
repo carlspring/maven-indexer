@@ -33,14 +33,12 @@ import org.apache.lucene.document.Field.Store;
 import org.apache.maven.index.*;
 import org.apache.maven.index.ArtifactAvailability;
 import org.apache.maven.index.artifact.Gav;
-import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.locator.JavadocLocator;
 import org.apache.maven.index.locator.Locator;
 import org.apache.maven.index.locator.Sha1Locator;
 import org.apache.maven.index.locator.SignatureLocator;
 import org.apache.maven.index.locator.SourcesLocator;
 import org.apache.maven.model.Model;
-import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
