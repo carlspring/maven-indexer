@@ -35,14 +35,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.maven.index.ArtifactContext;
-import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.ArtifactScanningListener;
-import org.apache.maven.index.NexusIndexer;
-import org.apache.maven.index.ScanningResult;
+import org.apache.maven.index.*;
 import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
-import org.apache.maven.index.context.UnsupportedExistingLuceneIndexException;
 import org.apache.maven.index.packer.IndexPacker;
 import org.apache.maven.index.packer.IndexPackingRequest;
 import org.apache.maven.index.packer.IndexPackingRequest.IndexFormat;
@@ -284,7 +279,7 @@ public class NexusIndexerCli
     }
 
     private void index( final CommandLine cli, PlexusContainer plexus )
-        throws ComponentLookupException, IOException, UnsupportedExistingLuceneIndexException
+        throws ComponentLookupException, IOException
     {
         String indexDirectoryName = cli.getOptionValue( INDEX );
 
@@ -339,17 +334,23 @@ public class NexusIndexerCli
             }
         }
 
-        NexusIndexer indexer = plexus.lookup( NexusIndexer.class );
+        IndexerEngine indexerEngine = plexus.lookup( IndexerEngine.class );
+
+        Indexer indexer = plexus.lookup( Indexer.class );
+
+        Scanner scanner = plexus.lookup( Scanner.class );
 
         long tstart = System.currentTimeMillis();
 
-        IndexingContext context = indexer.addIndexingContext( //
+        IndexingContext context = indexer.createIndexingContext( //
             repositoryName, // context id
             repositoryName, // repository id
             repositoryFolder, // repository folder
             indexFolder, // index folder
             null, // repositoryUrl
             null, // index update url
+            true, // searchable
+            true, // reclaim
             indexers );
 
         final IndexSearcher indexSearcher = context.acquireIndexSearcher();
@@ -357,9 +358,15 @@ public class NexusIndexerCli
         {
             IndexPacker packer = plexus.lookup( IndexPacker.class );
 
-            ArtifactScanningListener listener = new IndexerListener( context, debug, quiet );
+            IndexerListener listener = new IndexerListener(context, debug, quiet);
 
-            indexer.scan( context, listener, true );
+            ScanningRequest scanningRequest = new ScanningRequest( context,
+                                                                   new DefaultScannerListener( context, indexerEngine, true, listener ),
+                                                                   repositoryFolder.getAbsolutePath() );
+
+
+
+            scanner.scan( scanningRequest );
 
             IndexPackingRequest request = new IndexPackingRequest( context, indexSearcher.getIndexReader(), outputFolder );
 
@@ -383,8 +390,7 @@ public class NexusIndexerCli
         }
         finally
         {
-            context.releaseIndexSearcher( indexSearcher );
-            indexer.removeIndexingContext( context, false );
+            context.releaseIndexSearcher(indexSearcher);
         }
     }
 
