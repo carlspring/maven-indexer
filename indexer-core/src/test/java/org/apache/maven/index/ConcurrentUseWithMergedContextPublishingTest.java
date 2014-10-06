@@ -65,7 +65,7 @@ public class ConcurrentUseWithMergedContextPublishingTest
     }
 
     @Override
-    protected int readIndex( final NexusIndexer nexusIndexer, final IndexingContext indexingContext )
+    protected int readIndex( final Indexer indexer, final IndexingContext indexingContext )
         throws IOException
     {
         // note: concurrent Index publishing into SAME directory is not supported and should be avoided.

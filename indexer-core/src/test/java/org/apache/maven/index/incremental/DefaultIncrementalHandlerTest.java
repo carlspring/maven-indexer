@@ -21,7 +21,7 @@ package org.apache.maven.index.incremental;
 
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.maven.index.AbstractIndexCreatorHelper;
-import org.apache.maven.index.NexusIndexer;
+import org.apache.maven.index.Indexer;
 import org.apache.maven.index.context.IndexingContext;
 import org.apache.maven.index.packer.IndexPackingRequest;
 import org.apache.maven.index.updater.IndexUpdateRequest;
@@ -40,7 +40,7 @@ public class DefaultIncrementalHandlerTest
 {
     IncrementalHandler handler = null;
 
-    NexusIndexer indexer = null;
+    Indexer indexer = null;
 
     IndexingContext context = null;
 
@@ -54,7 +54,7 @@ public class DefaultIncrementalHandlerTest
     {
         super.setUp();
 
-        indexer = lookup( NexusIndexer.class );
+        indexer = lookup( Indexer.class );
         handler = lookup( IncrementalHandler.class );
 
         indexDir = new File( getBasedir(), "target/index/nexus-incremental-test" );
@@ -70,8 +70,6 @@ public class DefaultIncrementalHandlerTest
         throws Exception
     {
         super.tearDown();
-
-        indexer.removeIndexingContext( context, true );
     }
 
     public void testUpdateInvalidProperties()

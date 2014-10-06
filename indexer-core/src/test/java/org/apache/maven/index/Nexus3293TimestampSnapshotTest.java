@@ -28,7 +28,6 @@ import org.apache.lucene.search.WildcardQuery;
 import org.apache.maven.index.artifact.Gav;
 import org.apache.maven.index.artifact.M2GavCalculator;
 import org.apache.maven.index.context.IndexingContext;
-import org.apache.maven.index.context.UnsupportedExistingLuceneIndexException;
 import org.codehaus.plexus.util.FileUtils;
 
 public class Nexus3293TimestampSnapshotTest
@@ -36,10 +35,10 @@ public class Nexus3293TimestampSnapshotTest
 {
     private IndexingContext context;
 
-    private NexusIndexer prepare()
-        throws Exception, IOException, UnsupportedExistingLuceneIndexException
+    private Indexer prepare()
+        throws Exception, IOException
     {
-        NexusIndexer indexer = lookup( NexusIndexer.class );
+        Indexer indexer = lookup( Indexer.class );
 
         File indexDir = new File( getBasedir(), "target/index/test-" + Long.toString( System.currentTimeMillis() ) );
         FileUtils.deleteDirectory( indexDir );
@@ -63,7 +62,7 @@ public class Nexus3293TimestampSnapshotTest
     public void test_nexus_3293_releaseJar()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         File artifact = new File( getBasedir(), "src/test/nexus-3293/aopalliance/aopalliance/1.0/aopalliance-1.0jar" );
 
@@ -92,7 +91,7 @@ public class Nexus3293TimestampSnapshotTest
     public void test_nexus_3293_indexTimestampedSnapshotJar()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         File artifact =
             new File( getBasedir(),
@@ -117,7 +116,7 @@ public class Nexus3293TimestampSnapshotTest
         validateIndexContents( indexer );
     }
 
-    private void validateIndexContents( NexusIndexer indexer )
+    private void validateIndexContents( Indexer indexer )
         throws Exception
     {
         WildcardQuery q = new WildcardQuery( new Term( ArtifactInfo.UINFO, "*aopalliance*" ) );

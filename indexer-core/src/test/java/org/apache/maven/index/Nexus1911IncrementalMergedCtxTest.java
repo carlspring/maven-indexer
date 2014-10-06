@@ -51,8 +51,6 @@ public class Nexus1911IncrementalMergedCtxTest
     protected void tearDown()
         throws Exception
     {
-        indexer.removeIndexingContext( context, true );
-
         context = member;
 
         super.tearDown();

@@ -31,7 +31,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.maven.index.AbstractNexusIndexerTest;
 import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.NexusIndexer;
+import org.apache.maven.index.Indexer;
 import org.apache.maven.index.context.IndexingContext;
 import org.apache.maven.index.context.MergedIndexingContext;
 import org.apache.maven.index.packer.IndexPackingRequest.IndexFormat;
@@ -53,50 +53,34 @@ public class NEXUS4149TransferFormatTest
     }
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         IndexingContext ctx1 =
-            nexusIndexer.addIndexingContext( "repo1", "repo1", new File( reposBase, "repo1" ), new File( idxsBase,
+            indexer.addIndexingContext( "repo1", "repo1", new File( reposBase, "repo1" ), new File( idxsBase,
                 "repo1" ), null, null, MIN_CREATORS );
-        nexusIndexer.scan( ctx1 );
+        indexer.scan( ctx1 );
 
         IndexingContext ctx2 =
-            nexusIndexer.addIndexingContext( "repo2", "repo2", new File( reposBase, "repo2" ), new File( idxsBase,
+            indexer.addIndexingContext( "repo2", "repo2", new File( reposBase, "repo2" ), new File( idxsBase,
                 "repo2" ), null, null, MIN_CREATORS );
-        nexusIndexer.scan( ctx2 );
+        indexer.scan( ctx2 );
 
         IndexingContext ctx3 =
-            nexusIndexer.addIndexingContext( "repo3", "repo3", new File( reposBase, "repo3" ), new File( idxsBase,
+            indexer.addIndexingContext( "repo3", "repo3", new File( reposBase, "repo3" ), new File( idxsBase,
                 "repo3" ), null, null, MIN_CREATORS );
-        nexusIndexer.scan( ctx3 );
+        indexer.scan( ctx3 );
 
         IndexingContext ctx4 =
-            nexusIndexer.addIndexingContext( "repo4", "repo4", new File( reposBase, "repo4" ), new File( idxsBase,
+            indexer.addIndexingContext( "repo4", "repo4", new File( reposBase, "repo4" ), new File( idxsBase,
                 "repo4" ), null, null, MIN_CREATORS );
-        nexusIndexer.scan( ctx4 );
+        indexer.scan( ctx4 );
 
         context =
-            nexusIndexer.addMergedIndexingContext( "ctx", "ctx", new File( reposBase, "merged" ), new File( idxsBase,
+            indexer.addMergedIndexingContext( "ctx", "ctx", new File( reposBase, "merged" ), new File( idxsBase,
                 "merged" ), false, Arrays.asList( ctx1, ctx2, ctx3, ctx4 ) );
 
         context.getIndexDirectoryFile().mkdirs();
-    }
-
-    @Override
-    protected void unprepareNexusIndexer( NexusIndexer nexusIndexer )
-        throws Exception
-    {
-        // remove the merged
-        nexusIndexer.removeIndexingContext( context, true );
-
-        // remove members
-        MergedIndexingContext mctx = (MergedIndexingContext) context;
-
-        for ( IndexingContext member : mctx.getMembers() )
-        {
-            nexusIndexer.removeIndexingContext( member, true );
-        }
     }
 
     @Override

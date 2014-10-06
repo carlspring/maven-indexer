@@ -22,10 +22,7 @@ package org.apache.maven.index.treeview;
 import java.io.File;
 
 import org.apache.maven.index.AbstractNexusIndexerTest;
-import org.apache.maven.index.NexusIndexer;
-import org.apache.maven.index.treeview.DefaultTreeNodeFactory;
-import org.apache.maven.index.treeview.IndexTreeView;
-import org.apache.maven.index.treeview.TreeNode;
+import org.apache.maven.index.Indexer;
 
 public class IndexTreeViewTest
     extends AbstractNexusIndexerTest
@@ -46,11 +43,11 @@ public class IndexTreeViewTest
     }
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
-        context = nexusIndexer.addIndexingContext( "test-minimal", "test", repo, indexDir, null, null, MIN_CREATORS );
-        nexusIndexer.scan( context );
+        context = indexer.addIndexingContext( "test-minimal", "test", repo, indexDir, null, null, MIN_CREATORS );
+        indexer.scan( context );
     }
 
     protected int prettyPrint( boolean debug, TreeNode node, int level )

@@ -35,20 +35,20 @@ public class Nexus687NexusIndexerTest
     protected File repo = new File( getBasedir(), "src/test/nexus-687" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         context =
-            nexusIndexer.addIndexingContext( "nexus-687", "nexus-687", repo, indexDir, null, null, DEFAULT_CREATORS );
-        nexusIndexer.scan( context );
+            indexer.addIndexingContext( "nexus-687", "nexus-687", repo, indexDir, null, null, DEFAULT_CREATORS );
+        indexer.scan( context );
     }
 
     public void testSearchFlat()
         throws Exception
     {
-        Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "xstream", SearchType.SCORED );
+        Query q = indexer.constructQuery( MAVEN.GROUP_ID, "xstream", SearchType.SCORED );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
 
         Collection<ArtifactInfo> r = response.getResults();
 

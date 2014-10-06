@@ -29,19 +29,19 @@ public class Nexus3233NexusIndexerTest
     protected File repo = new File( getBasedir(), "src/test/nexus-3233" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         context =
-            nexusIndexer.addIndexingContext( "nexus-3233", "nexus-3233", repo, indexDir, null, null, FULL_CREATORS );
-        nexusIndexer.scan( context );
+            indexer.addIndexingContext( "nexus-3233", "nexus-3233", repo, indexDir, null, null, FULL_CREATORS );
+        indexer.scan( context );
     }
 
     public void testIdentifyPomPackagingArtifacts()
         throws Exception
     {
         // POM1
-        Collection<ArtifactInfo> ais = nexusIndexer.identify( MAVEN.SHA1, "741ea3998e6db3ce202d8b88aa53889543f050cc" );
+        Collection<ArtifactInfo> ais = indexer.identify( MAVEN.SHA1, "741ea3998e6db3ce202d8b88aa53889543f050cc" );
 
         assertEquals( 1, ais.size() );
 
@@ -56,7 +56,7 @@ public class Nexus3233NexusIndexerTest
         assertEquals( "1.0-SNAPSHOT", ai.getVersion() );
 
         // POM2
-        ais = nexusIndexer.identify( MAVEN.SHA1, "efb52d4ef65452b4e575fc2e7709595915775857" );
+        ais = indexer.identify( MAVEN.SHA1, "efb52d4ef65452b4e575fc2e7709595915775857" );
 
         assertEquals( 1, ais.size() );
 

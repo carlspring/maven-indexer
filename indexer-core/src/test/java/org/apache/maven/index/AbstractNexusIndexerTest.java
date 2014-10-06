@@ -30,7 +30,7 @@ import org.apache.maven.index.context.IndexingContext;
 public abstract class AbstractNexusIndexerTest
     extends AbstractIndexCreatorHelper
 {
-    protected Indexer nexusIndexer;
+    protected Indexer indexer;
 
     protected Directory indexDir = new RAMDirectory();
 
@@ -43,28 +43,21 @@ public abstract class AbstractNexusIndexerTest
 //        indexDir = new SimpleFSDirectory(new File("/tmp/nexus-test"));
         super.setUp();
         // FileUtils.deleteDirectory( indexDir );
-        nexusIndexer = lookup( Indexer.class );
-        prepareNexusIndexer( nexusIndexer );
+        indexer = lookup( Indexer.class );
+        prepareIndexer(indexer);
     }
 
     @Override
     protected void tearDown()
         throws Exception
     {
-        unprepareNexusIndexer( nexusIndexer );
         super.tearDown();
         // TODO: Brian reported, does not work on Windows because of left open files?
         // FileUtils.deleteDirectory( indexDir );
     }
 
-    protected abstract void prepareNexusIndexer( Indexer nexusIndexer )
+    protected abstract void prepareIndexer(Indexer indexer)
         throws Exception;
-
-    protected void unprepareNexusIndexer( Indexer nexusIndexer )
-        throws Exception
-    {
-        nexusIndexer.removeIndexingContext( context, false );
-    }
 
     protected void assertGroup( int expected, String group, IndexingContext context )
         throws IOException
@@ -80,7 +73,7 @@ public abstract class AbstractNexusIndexerTest
         // PhraseQuery pq = new PhraseQuery();
         // pq.add( new Term( ArtifactInfo.UINFO, group + "*" ) );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( pq, context ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( pq, context ) );
         Collection<ArtifactInfo> artifacts = response.getResults();
         assertEquals( artifacts.toString(), expected, artifacts.size() );
     }

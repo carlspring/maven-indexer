@@ -25,10 +25,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.lucene.search.Query;
-import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.FlatSearchRequest;
-import org.apache.maven.index.FlatSearchResponse;
-import org.apache.maven.index.NexusIndexer;
 
 public class Nexus1179NexusIndexerTest
     extends AbstractNexusIndexerTest
@@ -36,12 +32,12 @@ public class Nexus1179NexusIndexerTest
     protected File repo = new File( getBasedir(), "src/test/nexus-1179" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         context =
-            nexusIndexer.addIndexingContext( "nexus-1179", "nexus-1179", repo, indexDir, null, null, DEFAULT_CREATORS );
-        nexusIndexer.scan( context );
+            indexer.addIndexingContext( "nexus-1179", "nexus-1179", repo, indexDir, null, null, DEFAULT_CREATORS );
+        indexer.scan( context );
     }
 
     public void testSearchFlat()
@@ -50,10 +46,10 @@ public class Nexus1179NexusIndexerTest
         // Since 4.0 this query become illegal
         // This test only performs search and expects to have all the "problematic" ones found too, to prove
         // they are indexed
-        // Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "*", SearchType.SCORED );
+        // Query q = indexer.constructQuery( MAVEN.GROUP_ID, "*", SearchType.SCORED );
         // So, we found the "common denominator" and thats version
-        Query q = nexusIndexer.constructQuery( MAVEN.VERSION, "1", SearchType.SCORED );
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q ) );
+        Query q = indexer.constructQuery( MAVEN.VERSION, "1", SearchType.SCORED );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
         Collection<ArtifactInfo> r = response.getResults();
 
         assertEquals( 4, r.size() );

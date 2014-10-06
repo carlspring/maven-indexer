@@ -29,7 +29,7 @@ import org.apache.maven.index.context.IndexingContext;
 public class FSDirectoryDeleteTest
     extends AbstractIndexCreatorHelper
 {
-    protected NexusIndexer nexusIndexer;
+    protected Indexer indexer;
 
     protected File repo = new File( getBasedir(), "src/test/nexus-13" );
 
@@ -51,20 +51,20 @@ public class FSDirectoryDeleteTest
     {
         super.setUp();
 
-        nexusIndexer = lookup( NexusIndexer.class );
+        indexer = lookup( Indexer.class );
 
         indexDir = FSDirectory.open( indexDirFile );
 
-        context = nexusIndexer.addIndexingContext( "one", "nexus-13", repo, indexDir, null, null, DEFAULT_CREATORS );
+        context = indexer.addIndexingContext( "one", "nexus-13", repo, indexDir, null, null, DEFAULT_CREATORS );
 
-        nexusIndexer.scan( context );
+        indexer.scan( context );
 
         otherIndexDir = FSDirectory.open( otherIndexDirFile );
 
         otherContext =
-            nexusIndexer.addIndexingContext( "other", "nexus-13", repo, otherIndexDir, null, null, DEFAULT_CREATORS );
+            indexer.addIndexingContext( "other", "nexus-13", repo, otherIndexDir, null, null, DEFAULT_CREATORS );
 
-        nexusIndexer.scan( otherContext );
+        indexer.scan( otherContext );
     }
 
     @Override
@@ -72,10 +72,6 @@ public class FSDirectoryDeleteTest
         throws Exception
     {
         super.tearDown();
-
-        nexusIndexer.removeIndexingContext( context, true );
-
-        nexusIndexer.removeIndexingContext( otherContext, true );
 
         super.deleteDirectory( indexDirFile );
 

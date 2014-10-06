@@ -33,19 +33,19 @@ public class Nexus658NexusIndexerTest
     protected File repo = new File( getBasedir(), "src/test/nexus-658" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         context =
-            nexusIndexer.addIndexingContext( "nexus-658", "nexus-658", repo, indexDir, null, null, DEFAULT_CREATORS );
-        nexusIndexer.scan( context );
+            indexer.addIndexingContext( "nexus-658", "nexus-658", repo, indexDir, null, null, DEFAULT_CREATORS );
+        indexer.scan( context );
     }
 
     public void testSearchFlat()
         throws Exception
     {
-        Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "org.sonatype.nexus", SearchType.SCORED );
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q ) );
+        Query q = indexer.constructQuery( MAVEN.GROUP_ID, "org.sonatype.nexus", SearchType.SCORED );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
         Collection<ArtifactInfo> r = response.getResults();
         assertEquals( r.toString(), 4, r.size() );
 

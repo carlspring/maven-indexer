@@ -25,14 +25,8 @@ import java.util.ArrayList;
 
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.maven.index.AbstractIndexCreatorHelper;
-import org.apache.maven.index.ArtifactContext;
-import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.IteratorSearchRequest;
-import org.apache.maven.index.IteratorSearchResponse;
-import org.apache.maven.index.MAVEN;
-import org.apache.maven.index.NexusIndexer;
-import org.apache.maven.index.SearchType;
+import org.apache.maven.index.*;
+import org.apache.maven.index.Indexer;
 import org.apache.maven.index.artifact.Gav;
 import org.apache.maven.index.context.IndexingContext;
 import org.apache.maven.index.packer.IndexPacker;
@@ -52,7 +46,7 @@ public abstract class AbstractIndexUpdaterTest
 
     String repositoryUrl = "http://repo1.maven.org/maven2/";
 
-    NexusIndexer indexer;
+    Indexer indexer;
 
     IndexUpdater updater;
 
@@ -75,7 +69,7 @@ public abstract class AbstractIndexUpdaterTest
         indexDir = super.getDirectory( "indexerUpdater" );
         indexDir.mkdirs();
 
-        indexer = lookup( NexusIndexer.class );
+        indexer = lookup( Indexer.class );
 
         updater = lookup( IndexUpdater.class );
 
@@ -91,9 +85,6 @@ public abstract class AbstractIndexUpdaterTest
         throws Exception
     {
         super.tearDown();
-
-        // this one closes it too
-        indexer.removeIndexingContext( context, true );
 
         FileUtils.forceDelete( testBasedir );
 

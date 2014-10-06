@@ -24,16 +24,11 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.maven.index.ArtifactContext;
-import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.FlatSearchRequest;
-import org.apache.maven.index.FlatSearchResponse;
-import org.apache.maven.index.NexusIndexer;
-import org.apache.maven.index.OSGI;
+import org.apache.maven.index.*;
+import org.apache.maven.index.Indexer;
 import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
 import org.apache.maven.index.expr.StringSearchExpression;
-import org.apache.maven.index.AbstractTestSupport;
 import org.codehaus.plexus.util.FileUtils;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -46,7 +41,7 @@ public class OsgiArtifactIndexCreatorTest
 {
     protected IndexCreator indexCreator;
 
-    private NexusIndexer nexusIndexer;
+    private Indexer indexer;
 
     static final String INDEX_ID = "osgi-test1";
 
@@ -58,7 +53,7 @@ public class OsgiArtifactIndexCreatorTest
 
         indexCreator = this.lookup( IndexCreator.class, OsgiArtifactIndexCreator.ID );
 
-        nexusIndexer = this.lookup( NexusIndexer.class );
+        indexer = this.lookup( Indexer.class );
     }
 
     public void testAssertIndexCreatorComponentExists()
@@ -130,12 +125,10 @@ public class OsgiArtifactIndexCreatorTest
                                          new MavenPluginArtifactInfoIndexCreator(), new OsgiArtifactIndexCreator() );
 
         IndexingContext indexingContext =
-            nexusIndexer.addIndexingContext( INDEX_ID, INDEX_ID, repo, repoIndexDir, "http://www.apache.org",
+            indexer.addIndexingContext( INDEX_ID, INDEX_ID, repo, repoIndexDir, "http://www.apache.org",
                                              "http://www.apache.org/.index", indexCreators );
         indexingContext.setSearchable( true );
-        nexusIndexer.scan( indexingContext, false );
-
-
+        indexer.scan( indexingContext, false );
     }
 
     public void testIndexOSGIRepoThenSearch()
@@ -148,31 +141,31 @@ public class OsgiArtifactIndexCreatorTest
 
             BooleanQuery q = new BooleanQuery();
 
-            q.add( nexusIndexer.constructQuery( OSGI.SYMBOLIC_NAME,
+            q.add( indexer.constructQuery( OSGI.SYMBOLIC_NAME,
                                                 new StringSearchExpression( "org.apache.karaf.features.command" ) ),
                    BooleanClause.Occur.MUST );
 
             FlatSearchRequest request = new FlatSearchRequest( q );
-            FlatSearchResponse response = nexusIndexer.searchFlat( request );
+            FlatSearchResponse response = indexer.searchFlat( request );
 
             // here only one results !
             assertEquals( 1, response.getResults().size() );
 
             q = new BooleanQuery();
 
-            q.add( nexusIndexer.constructQuery( OSGI.SYMBOLIC_NAME,
+            q.add( indexer.constructQuery( OSGI.SYMBOLIC_NAME,
                                                 new StringSearchExpression( "org.apache.karaf.features.core" ) ),
                    BooleanClause.Occur.MUST );
 
             request = new FlatSearchRequest( q );
-            response = nexusIndexer.searchFlat( request );
+            response = indexer.searchFlat( request );
 
             // here two results !
             assertEquals( 2, response.getResults().size() );
         }
         finally
         {
-            nexusIndexer.getIndexingContexts().get( INDEX_ID ).close( true );
+            indexer.getIndexingContexts().get( INDEX_ID ).close( true );
         }
     }
 
@@ -187,22 +180,22 @@ public class OsgiArtifactIndexCreatorTest
 
             BooleanQuery q = new BooleanQuery();
 
-            q.add( nexusIndexer.constructQuery( OSGI.SYMBOLIC_NAME,
+            q.add( indexer.constructQuery( OSGI.SYMBOLIC_NAME,
                                                 new StringSearchExpression( "org.apache.karaf.features.core" ) ),
                    BooleanClause.Occur.MUST );
 
-            q.add( nexusIndexer.constructQuery( OSGI.VERSION, new StringSearchExpression( "2.2.1" ) ),
+            q.add( indexer.constructQuery( OSGI.VERSION, new StringSearchExpression( "2.2.1" ) ),
                    BooleanClause.Occur.MUST );
 
             FlatSearchRequest request = new FlatSearchRequest( q );
-            FlatSearchResponse response = nexusIndexer.searchFlat( request );
+            FlatSearchResponse response = indexer.searchFlat( request );
 
             // here only one results as we use version
             assertEquals( 1, response.getResults().size() );
         }
         finally
         {
-            nexusIndexer.getIndexingContexts().get( INDEX_ID ).close( true );
+            indexer.getIndexingContexts().get( INDEX_ID ).close( true );
         }
 
     }
@@ -218,11 +211,11 @@ public class OsgiArtifactIndexCreatorTest
 
             BooleanQuery q = new BooleanQuery();
 
-            q.add( nexusIndexer.constructQuery( OSGI.EXPORT_PACKAGE, new StringSearchExpression(
+            q.add( indexer.constructQuery( OSGI.EXPORT_PACKAGE, new StringSearchExpression(
                 "org.apache.karaf.features.command.completers" ) ), BooleanClause.Occur.MUST );
 
             FlatSearchRequest request = new FlatSearchRequest( q );
-            FlatSearchResponse response = nexusIndexer.searchFlat( request );
+            FlatSearchResponse response = indexer.searchFlat( request );
 
             //System.out.println("results with export package query " + response.getResults() );
             assertEquals( 1, response.getResults().size() );
@@ -248,7 +241,7 @@ public class OsgiArtifactIndexCreatorTest
         }
         finally
         {
-            nexusIndexer.getIndexingContexts().get( INDEX_ID ).close( true );
+            indexer.getIndexingContexts().get( INDEX_ID ).close( true );
         }
 
     }
@@ -264,11 +257,11 @@ public class OsgiArtifactIndexCreatorTest
 
             BooleanQuery q = new BooleanQuery();
 
-            q.add( nexusIndexer.constructQuery( OSGI.EXPORT_SERVICE, new StringSearchExpression(
+            q.add( indexer.constructQuery( OSGI.EXPORT_SERVICE, new StringSearchExpression(
                 "org.apache.felix.bundlerepository.RepositoryAdmin" ) ), BooleanClause.Occur.MUST );
 
             FlatSearchRequest request = new FlatSearchRequest( q );
-            FlatSearchResponse response = nexusIndexer.searchFlat( request );
+            FlatSearchResponse response = indexer.searchFlat( request );
 
             //System.out.println("results with export package query " + response.getResults() );
             assertThat(response.getResults().size(), is(1));
@@ -286,7 +279,7 @@ public class OsgiArtifactIndexCreatorTest
         }
         finally
         {
-            nexusIndexer.getIndexingContexts().get( INDEX_ID ).close( true );
+            indexer.getIndexingContexts().get( INDEX_ID ).close( true );
         }
 
     }

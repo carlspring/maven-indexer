@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import org.apache.lucene.search.Query;
 import org.apache.maven.index.context.IndexingContext;
-import org.apache.maven.index.context.UnsupportedExistingLuceneIndexException;
 import org.codehaus.plexus.util.FileUtils;
 
 public class UniqueArtifactFilterTest
@@ -35,7 +34,7 @@ public class UniqueArtifactFilterTest
     public void testSearchIterator()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         Query q = indexer.constructQuery( MAVEN.GROUP_ID, "qdox", SearchType.SCORED );
 
@@ -54,7 +53,7 @@ public class UniqueArtifactFilterTest
     public void testSearchIteratorWithFilter()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         Query q = indexer.constructQuery( MAVEN.GROUP_ID, "commons", SearchType.SCORED );
 
@@ -84,10 +83,10 @@ public class UniqueArtifactFilterTest
 
     // ==
 
-    private NexusIndexer prepare()
-        throws Exception, IOException, UnsupportedExistingLuceneIndexException
+    private Indexer prepare()
+        throws Exception, IOException
     {
-        NexusIndexer indexer = lookup( NexusIndexer.class );
+        Indexer indexer = lookup( Indexer.class );
 
         // Directory indexDir = new RAMDirectory();
         File indexDir = new File( getBasedir(), "target/index/test-" + Long.toString( System.currentTimeMillis() ) );

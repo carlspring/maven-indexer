@@ -33,19 +33,19 @@ public class Nexus3881NexusIndexerTest
     protected File repo = new File( getBasedir(), "src/test/nexus-3881" );
 
     @Override
-    protected void prepareNexusIndexer( Indexer nexusIndexer )
+    protected void prepareIndexer(Indexer indexer)
         throws Exception
     {
         context =
-            nexusIndexer.createIndexingContext( "nexus-3881", "nexus-3881", repo, indexDir, null, null, DEFAULT_CREATORS );
-        nexusIndexer.scan( context );
+            indexer.createIndexingContext( "nexus-3881", "nexus-3881", repo, indexDir, null, null, DEFAULT_CREATORS );
+        indexer.scan( context );
     }
 
     public void testRelevances()
         throws Exception
     {
-        Query q1 = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "solution", SearchType.SCORED );
-        Query q2 = nexusIndexer.constructQuery( MAVEN.ARTIFACT_ID, "solution", SearchType.SCORED );
+        Query q1 = indexer.constructQuery( MAVEN.GROUP_ID, "solution", SearchType.SCORED );
+        Query q2 = indexer.constructQuery( MAVEN.ARTIFACT_ID, "solution", SearchType.SCORED );
 
         BooleanQuery bq = new BooleanQuery();
         bq.add( q1, Occur.SHOULD );
@@ -54,7 +54,7 @@ public class Nexus3881NexusIndexerTest
         IteratorSearchRequest request = new IteratorSearchRequest( bq );
         request.setLuceneExplain( true );
         
-        IteratorSearchResponse response = nexusIndexer.searchIterator( request );
+        IteratorSearchResponse response = indexer.searchIterator( request );
 
         Assert.assertEquals( "All artifacts has 'solution' in their GA!", 4, response.getTotalHits() );
         

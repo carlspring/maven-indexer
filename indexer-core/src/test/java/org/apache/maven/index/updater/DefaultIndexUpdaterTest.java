@@ -101,8 +101,6 @@ public class DefaultIndexUpdaterTest
 
         Date newIndexTimestamp = tempContext.getTimestamp();
 
-        indexer.removeIndexingContext( tempContext, false );
-
         context.replace( tempDir2 );
 
         assertEquals( newIndexTimestamp, context.getTimestamp() );
@@ -152,8 +150,6 @@ public class DefaultIndexUpdaterTest
 
             RAMDirectory tempDir2 = new RAMDirectory( tempContext.getIndexDirectory(), IOContext.DEFAULT );
 
-            indexer.removeIndexingContext( tempContext, false );
-
             context.merge( tempDir2 );
 
             FlatSearchResponse response2 = indexer.searchFlat( new FlatSearchRequest( q ) );
@@ -194,8 +190,6 @@ public class DefaultIndexUpdaterTest
                 createArtifactContext( repositoryId, "commons-lang", "commons-lang", "2.4", null ), tempContext );
 
             RAMDirectory tempDir2 = new RAMDirectory( tempContext.getIndexDirectory(), IOContext.DEFAULT );
-
-            indexer.removeIndexingContext( tempContext, false );
 
             context.merge( tempDir2 );
         }
@@ -268,8 +262,6 @@ public class DefaultIndexUpdaterTest
                 createArtifactContext( repositoryId, "org.slf4j.foo", "jcl104-over-slf4j", "1.4.2", null ), context );
 
             RAMDirectory tempDir2 = new RAMDirectory( tempContext.getIndexDirectory(), IOContext.DEFAULT );
-
-            indexer.removeIndexingContext( tempContext, false );
 
             context.merge( tempDir2 );
         }

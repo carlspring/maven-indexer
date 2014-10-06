@@ -30,7 +30,6 @@ import junit.framework.TestCase;
 import org.apache.maven.index.context.DefaultIndexingContext;
 import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
-import org.apache.maven.index.context.UnsupportedExistingLuceneIndexException;
 import org.apache.maven.index.updater.fixtures.ServerTestFixture;
 import org.apache.maven.index.updater.fixtures.TransferListenerFixture;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
@@ -88,7 +87,7 @@ public class DefaultIndexUpdaterEmbeddingIT
     }
 
     public void testBasicIndexRetrieval()
-        throws IOException, UnsupportedExistingLuceneIndexException, ComponentLookupException
+        throws IOException, ComponentLookupException
     {
         File basedir = File.createTempFile( "nexus-indexer.", ".dir" );
         basedir.delete();
@@ -119,7 +118,7 @@ public class DefaultIndexUpdaterEmbeddingIT
     }
 
     public void testBasicAuthenticatedIndexRetrieval()
-        throws IOException, UnsupportedExistingLuceneIndexException, ComponentLookupException
+        throws IOException, ComponentLookupException
     {
         File basedir = File.createTempFile( "nexus-indexer.", ".dir" );
         basedir.delete();
@@ -158,7 +157,7 @@ public class DefaultIndexUpdaterEmbeddingIT
     }
 
     public void testAuthenticatedIndexRetrieval_LongAuthorizationHeader()
-        throws IOException, UnsupportedExistingLuceneIndexException, ComponentLookupException
+        throws IOException, ComponentLookupException
     {
         File basedir = File.createTempFile( "nexus-indexer.", ".dir" );
         basedir.delete();
@@ -197,7 +196,7 @@ public class DefaultIndexUpdaterEmbeddingIT
     }
 
     public void testBasicHighLatencyIndexRetrieval()
-        throws IOException, UnsupportedExistingLuceneIndexException, ComponentLookupException
+        throws IOException, ComponentLookupException
     {
         File basedir = File.createTempFile( "nexus-indexer.", ".dir" );
         basedir.delete();
@@ -237,7 +236,7 @@ public class DefaultIndexUpdaterEmbeddingIT
 
     // Disabled, since with Wagon you cannot set timeout as it was possible with Jetty client
     public void OFFtestHighLatencyIndexRetrieval_LowConnectionTimeout()
-        throws IOException, UnsupportedExistingLuceneIndexException, ComponentLookupException
+        throws IOException, ComponentLookupException
     {
         File basedir = File.createTempFile( "nexus-indexer.", ".dir" );
         basedir.delete();
@@ -294,7 +293,7 @@ public class DefaultIndexUpdaterEmbeddingIT
 
     // Disabled, since with Wagon you cannot set timeout as it was possible with Jetty client
     public void OFFtestHighLatencyIndexRetrieval_LowTransactionTimeout()
-        throws IOException, UnsupportedExistingLuceneIndexException, ComponentLookupException
+        throws IOException, ComponentLookupException
     {
         File basedir = File.createTempFile( "nexus-indexer.", ".dir" );
         basedir.delete();
@@ -350,7 +349,7 @@ public class DefaultIndexUpdaterEmbeddingIT
     }
 
     public void testIndexRetrieval_InfiniteRedirection()
-        throws IOException, UnsupportedExistingLuceneIndexException, ComponentLookupException
+        throws IOException, ComponentLookupException
     {
         File basedir = File.createTempFile( "nexus-indexer.", ".dir" );
         basedir.delete();
@@ -394,7 +393,7 @@ public class DefaultIndexUpdaterEmbeddingIT
     }
 
     public void testIndexRetrieval_BadHostname()
-        throws IOException, UnsupportedExistingLuceneIndexException, ComponentLookupException
+        throws IOException, ComponentLookupException
     {
         File basedir = File.createTempFile( "nexus-indexer.", ".dir" );
         basedir.delete();
@@ -446,7 +445,7 @@ public class DefaultIndexUpdaterEmbeddingIT
     }
 
     private IndexingContext newTestContext( final File basedir, final String baseUrl )
-        throws IOException, UnsupportedExistingLuceneIndexException, ComponentLookupException
+        throws IOException, ComponentLookupException
     {
         IndexCreator min = container.lookup( IndexCreator.class, "min" );
         IndexCreator jar = container.lookup( IndexCreator.class, "jarContent" );

@@ -34,7 +34,7 @@ public class Mindexer14HitLimitTest
     protected File repo = new File( getBasedir(), "target/repo/mindexer14" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         // Put Plexus into DEBUG mode
@@ -43,9 +43,9 @@ public class Mindexer14HitLimitTest
         repo.mkdirs();
 
         context =
-            nexusIndexer.addIndexingContext( "mindexer14", "mindexer14", repo, indexDir, null, null, MIN_CREATORS );
+            indexer.addIndexingContext( "mindexer14", "mindexer14", repo, indexDir, null, null, MIN_CREATORS );
 
-        nexusIndexer.scan( context, false );
+        indexer.scan( context, false );
     }
 
     protected void createDummyAis( final String gid, final String aid, final int count )
@@ -59,7 +59,7 @@ public class Mindexer14HitLimitTest
 
             final ArtifactContext ac = new ArtifactContext( null, null, null, ai, ai.calculateGav() );
 
-            nexusIndexer.addArtifactToIndex( ac, context );
+            indexer.addArtifactToIndex( ac, context );
         }
 
     }
@@ -69,11 +69,11 @@ public class Mindexer14HitLimitTest
     {
         createDummyAis( "org.test", "mindexer14", 1010 );
 
-        Query query = nexusIndexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
 
         FlatSearchRequest request = new FlatSearchRequest( query );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( request );
+        FlatSearchResponse response = indexer.searchFlat( request );
 
         assertEquals( 1010, response.getTotalHitsCount() );
 
@@ -85,11 +85,11 @@ public class Mindexer14HitLimitTest
     {
         createDummyAis( "org.test", "mindexer14", 1010 );
 
-        Query query = nexusIndexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
 
         FlatSearchRequest request = new FlatSearchRequest( query );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( request );
+        FlatSearchResponse response = indexer.searchFlat( request );
 
         assertEquals( 1010, response.getTotalHitsCount() );
         assertEquals( 1010, response.getReturnedHitsCount() );
@@ -103,12 +103,12 @@ public class Mindexer14HitLimitTest
     {
         createDummyAis( "org.test", "mindexer14", 1010 );
 
-        Query query = nexusIndexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
 
         FlatSearchRequest request = new FlatSearchRequest( query );
         request.setCount( 234 );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( request );
+        FlatSearchResponse response = indexer.searchFlat( request );
 
         assertEquals( 1010, response.getTotalHitsCount() );
         assertEquals( 234, response.getReturnedHitsCount() );
@@ -122,11 +122,11 @@ public class Mindexer14HitLimitTest
     {
         createDummyAis( "org.test", "mindexer14", 1010 );
 
-        Query query = nexusIndexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
 
         GroupedSearchRequest request = new GroupedSearchRequest( query, new GAGrouping() );
 
-        GroupedSearchResponse response = nexusIndexer.searchGrouped( request );
+        GroupedSearchResponse response = indexer.searchGrouped( request );
 
         assertEquals( 1010, response.getTotalHitsCount() );
         // in case of GroupedSearch, grouping is the one that defines count
@@ -142,11 +142,11 @@ public class Mindexer14HitLimitTest
     {
         createDummyAis( "org.test", "mindexer14", 1010 );
 
-        Query query = nexusIndexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.test" ) );
 
         IteratorSearchRequest request = new IteratorSearchRequest( query );
 
-        IteratorSearchResponse response = nexusIndexer.searchIterator( request );
+        IteratorSearchResponse response = indexer.searchIterator( request );
 
         assertEquals( 1010, response.getTotalHitsCount() );
 

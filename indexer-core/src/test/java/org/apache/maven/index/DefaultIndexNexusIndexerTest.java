@@ -47,15 +47,15 @@ public class DefaultIndexNexusIndexerTest
     extends MinimalIndexNexusIndexerTest
 {
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         context =
-            nexusIndexer.addIndexingContext( "test-default", "test", repo, indexDir, null, null, DEFAULT_CREATORS );
+            indexer.addIndexingContext( "test-default", "test", repo, indexDir, null, null, DEFAULT_CREATORS );
 
         assertNull( context.getTimestamp() ); // unknown upon creation
 
-        nexusIndexer.scan( context );
+        indexer.scan( context );
 
         assertNotNull( context.getTimestamp() );
     }
@@ -76,7 +76,7 @@ public class DefaultIndexNexusIndexerTest
         TermQuery tq = new TermQuery( new Term( ArtifactInfo.PACKAGING, "maven-plugin" ) );
         Query query = new FilteredQuery( tq, new QueryWrapperFilter( bq ) );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( query ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( query ) );
 
         Collection<ArtifactInfo> r = response.getResults();
 
@@ -110,7 +110,7 @@ public class DefaultIndexNexusIndexerTest
         throws Exception
     {
         Query query = new TermQuery( new Term( ArtifactInfo.PACKAGING, "maven-plugin" ) );
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( query ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( query ) );
         // repo contains 3 artifacts with packaging "maven-plugin", but one of the is actually an archetype!
         assertEquals( response.getResults().toString(), 2, response.getTotalHits() );
     }
@@ -125,7 +125,7 @@ public class DefaultIndexNexusIndexerTest
         // FilteredQuery query = new FilteredQuery(tq, new QueryWrapperFilter(bq));
 
         Query q = new TermQuery( new Term( ArtifactInfo.PACKAGING, "maven-archetype" ) );
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
         Collection<ArtifactInfo> r = response.getResults();
 
         assertEquals( 4, r.size() );
@@ -184,7 +184,7 @@ public class DefaultIndexNexusIndexerTest
         Directory newIndexDir = FSDirectory.open( newIndex );
 
         IndexingContext newContext =
-            nexusIndexer.addIndexingContext( "test-new", "test", null, newIndexDir, null, null, DEFAULT_CREATORS );
+            indexer.addIndexingContext( "test-new", "test", null, newIndexDir, null, null, DEFAULT_CREATORS );
 
         final IndexUpdater indexUpdater = lookup( IndexUpdater.class );
         indexUpdater.fetchAndUpdateIndex( new IndexUpdateRequest( newContext, new DefaultIndexUpdater.FileFetcher( targetDir ) ) );
@@ -195,10 +195,10 @@ public class DefaultIndexNexusIndexerTest
 
         // make sure context has the same artifacts
 
-        Query query = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "qdox", SearchType.SCORED );
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, "qdox", SearchType.SCORED );
 
         FlatSearchRequest request = new FlatSearchRequest( query, newContext );
-        FlatSearchResponse response = nexusIndexer.searchFlat( request );
+        FlatSearchResponse response = indexer.searchFlat( request );
         Collection<ArtifactInfo> r = response.getResults();
 
         System.out.println(r);
@@ -226,7 +226,7 @@ public class DefaultIndexNexusIndexerTest
         newIndexDir = FSDirectory.open( newIndex );
 
         newContext =
-            nexusIndexer.addIndexingContext( "test-new", "test", null, newIndexDir, null, null, DEFAULT_CREATORS );
+            indexer.addIndexingContext( "test-new", "test", null, newIndexDir, null, null, DEFAULT_CREATORS );
 
         indexUpdater.fetchAndUpdateIndex( new IndexUpdateRequest( newContext, new DefaultIndexUpdater.FileFetcher( targetDir ) ) );
 
@@ -246,7 +246,7 @@ public class DefaultIndexNexusIndexerTest
         TermQuery tq = new TermQuery( new Term( ArtifactInfo.PACKAGING, "maven-archetype" ) );
         Query query = new FilteredQuery( tq, new QueryWrapperFilter( bq ) );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( query ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( query ) );
 
         Collection<ArtifactInfo> r = response.getResults();
 
@@ -257,18 +257,18 @@ public class DefaultIndexNexusIndexerTest
         throws Exception
     {
         Query query = new TermQuery( new Term( ArtifactInfo.PACKAGING, "maven-archetype" ) );
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( query ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( query ) );
         assertEquals( response.getResults().toString(), 4, response.getTotalHits() );
     }
 
     public void testBrokenJar()
         throws Exception
     {
-        Query q = nexusIndexer.constructQuery( MAVEN.ARTIFACT_ID, "brokenjar", SearchType.SCORED );
+        Query q = indexer.constructQuery( MAVEN.ARTIFACT_ID, "brokenjar", SearchType.SCORED );
 
         FlatSearchRequest searchRequest = new FlatSearchRequest( q );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( searchRequest );
+        FlatSearchResponse response = indexer.searchFlat( searchRequest );
 
         Set<ArtifactInfo> r = response.getResults();
 
@@ -285,11 +285,11 @@ public class DefaultIndexNexusIndexerTest
     public void testMissingPom()
         throws Exception
     {
-        Query q = nexusIndexer.constructQuery( MAVEN.ARTIFACT_ID, "missingpom", SearchType.SCORED );
+        Query q = indexer.constructQuery( MAVEN.ARTIFACT_ID, "missingpom", SearchType.SCORED );
 
         FlatSearchRequest searchRequest = new FlatSearchRequest( q );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( searchRequest );
+        FlatSearchResponse response = indexer.searchFlat( searchRequest );
 
         Set<ArtifactInfo> r = response.getResults();
 

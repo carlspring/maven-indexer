@@ -284,7 +284,7 @@ public class BasicUsageExample
         bq = new BooleanQuery();
         bq.add( gidQ, Occur.MUST );
         bq.add( aidQ, Occur.MUST );
-        // bq.add( nexusIndexer.constructQuery( MAVEN.CLASSIFIER, new SourcedSearchExpression( "*" ) ), Occur.MUST_NOT
+        // bq.add( indexer.constructQuery( MAVEN.CLASSIFIER, new SourcedSearchExpression( "*" ) ), Occur.MUST_NOT
         // );
 
         searchAndDump( indexer, "main artifacts under GA org.apache.maven.indexer:indexer-artifact", bq );
@@ -315,12 +315,12 @@ public class BasicUsageExample
         indexer.closeIndexingContext( centralContext, false );
     }
 
-    public void searchAndDump( Indexer nexusIndexer, String descr, Query q )
+    public void searchAndDump( Indexer indexer, String descr, Query q )
         throws IOException
     {
         System.out.println( "Searching for " + descr );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q, centralContext ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q, centralContext ) );
 
         for ( ArtifactInfo ai : response.getResults() )
         {
@@ -332,12 +332,12 @@ public class BasicUsageExample
         System.out.println();
     }
 
-    public void searchGroupedAndDump( Indexer nexusIndexer, String descr, Query q, Grouping g )
+    public void searchGroupedAndDump( Indexer indexer, String descr, Query q, Grouping g )
         throws IOException
     {
         System.out.println( "Searching for " + descr );
 
-        GroupedSearchResponse response = nexusIndexer.searchGrouped( new GroupedSearchRequest( q, g, centralContext ) );
+        GroupedSearchResponse response = indexer.searchGrouped( new GroupedSearchRequest( q, g, centralContext ) );
 
         for ( Map.Entry<String, ArtifactInfoGroup> entry : response.getResults().entrySet() )
         {

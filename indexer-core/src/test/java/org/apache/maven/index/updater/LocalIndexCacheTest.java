@@ -30,7 +30,6 @@ import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.FlatSearchRequest;
 import org.apache.maven.index.FlatSearchResponse;
 import org.apache.maven.index.context.IndexingContext;
-import org.apache.maven.index.context.UnsupportedExistingLuceneIndexException;
 import org.apache.maven.index.fs.Locker;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -75,7 +74,7 @@ public class LocalIndexCacheTest
     }
 
     private IndexingContext getNewTempContext()
-        throws IOException, UnsupportedExistingLuceneIndexException
+        throws IOException
     {
         removeTempContext();
 
@@ -91,7 +90,6 @@ public class LocalIndexCacheTest
     {
         if ( tempContext != null )
         {
-            indexer.removeIndexingContext( tempContext, true );
             tempContext = null;
             FileUtils.cleanDirectory( indexDir );
         }

@@ -28,7 +28,6 @@ import java.util.List;
 import org.apache.maven.index.context.DefaultIndexingContext;
 import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
-import org.apache.maven.index.context.UnsupportedExistingLuceneIndexException;
 import org.apache.maven.index.updater.WagonHelper.WagonFetcher;
 import org.apache.maven.wagon.events.TransferEvent;
 import org.apache.maven.wagon.events.TransferListener;
@@ -53,10 +52,6 @@ public class FullBootProofOfConcept
             try
             {
                 run( basedir );
-            }
-            catch ( UnsupportedExistingLuceneIndexException e )
-            {
-                e.printStackTrace();
             }
             catch ( IOException e )
             {
@@ -88,8 +83,7 @@ public class FullBootProofOfConcept
     }
 
     public static void run( final File basedir )
-        throws IOException, ComponentLookupException, PlexusContainerException, ParseException,
-        UnsupportedExistingLuceneIndexException
+        throws IOException, ComponentLookupException, PlexusContainerException, ParseException
     {
         try
         {

@@ -46,9 +46,7 @@ import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
 import org.apache.maven.index.context.MergedIndexingContext;
 import org.apache.maven.index.context.StaticContextMemberProvider;
-import org.apache.maven.index.context.UnsupportedExistingLuceneIndexException;
 import org.apache.maven.index.creator.MinimalArtifactInfoIndexCreator;
-import org.apache.maven.index.packer.DefaultIndexPacker;
 import org.apache.maven.index.packer.IndexPacker;
 import org.apache.maven.index.packer.IndexPackingRequest;
 import org.apache.maven.index.search.grouping.GAGrouping;
@@ -68,7 +66,7 @@ public class NexusIndexerTest
 
     public void testSingleQuery() throws Exception
     {
-        NexusIndexer indexer = lookup(NexusIndexer.class);
+        Indexer indexer = lookup( Indexer.class );
         // Directory indexDir = new RAMDirectory();
         File indexDir = super.getDirectory( "index/test" );
         super.deleteDirectory( indexDir );
@@ -88,7 +86,7 @@ public class NexusIndexerTest
     public void testQueryCreatorNG()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         Query q = null;
 
@@ -138,7 +136,7 @@ public class NexusIndexerTest
         assertNull( q );
     }
 
-    public void performQueryCreatorNGSearch( NexusIndexer indexer, IndexingContext context )
+    public void performQueryCreatorNGSearch( Indexer indexer, IndexingContext context )
         throws Exception
     {
         String qstr = null;
@@ -258,7 +256,7 @@ public class NexusIndexerTest
     public void testQueryCreatorNGSearch()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         performQueryCreatorNGSearch( indexer, context );
     }
@@ -266,7 +264,7 @@ public class NexusIndexerTest
     public void testQueryCreatorNGSearchOnMergedContext()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         File indexMergedDir = super.getDirectory( "index/testMerged" );
 
@@ -352,7 +350,7 @@ public class NexusIndexerTest
     public void testSearchIterator()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         Query q = indexer.constructQuery( MAVEN.GROUP_ID, "qdox", SearchType.SCORED );
 
@@ -371,7 +369,7 @@ public class NexusIndexerTest
     public void testSearchIteratorWithFilter()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         Query q = indexer.constructQuery( MAVEN.GROUP_ID, "qdox", SearchType.SCORED );
 
@@ -398,7 +396,7 @@ public class NexusIndexerTest
     public void testSearchGrouped()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         {
             Query q = indexer.constructQuery( MAVEN.GROUP_ID, "qdox", SearchType.SCORED );
@@ -432,7 +430,7 @@ public class NexusIndexerTest
     public void testSearchFlat()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         {
             WildcardQuery q = new WildcardQuery( new Term( ArtifactInfo.UINFO, "*testng*" ) );
@@ -457,7 +455,7 @@ public class NexusIndexerTest
     public void testSearchPackaging()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         WildcardQuery q = new WildcardQuery( new Term( ArtifactInfo.PACKAGING, "maven-plugin" ) );
         FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
@@ -468,7 +466,7 @@ public class NexusIndexerTest
     public void testIdentity()
         throws Exception
     {
-        NexusIndexer nexus = prepare();
+        Indexer nexus = prepare();
 
         // Search using SHA1 to find qdox 1.5
 
@@ -512,7 +510,7 @@ public class NexusIndexerTest
     public void testUpdateArtifact()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         Query q =
             new TermQuery( new Term( ArtifactInfo.UINFO, "org.apache.maven.plugins|maven-core-it-plugin|1.0|NA|jar" ) );
@@ -558,7 +556,7 @@ public class NexusIndexerTest
     public void testUnpack()
         throws Exception
     {
-        NexusIndexer indexer = prepare();
+        Indexer indexer = prepare();
 
         String indexId = context.getId();
         String repositoryId = context.getRepositoryId();
@@ -584,8 +582,6 @@ public class NexusIndexerTest
             context.releaseIndexSearcher( indexSearcher );
         }
 
-        indexer.removeIndexingContext( context, false );
-
         RAMDirectory newDirectory = new RAMDirectory();
 
         IndexingContext newContext = indexer.addIndexingContext( indexId, //
@@ -601,10 +597,10 @@ public class NexusIndexerTest
         assertEquals( infos.toString(), 2, infos.size() );
     }
 
-    private NexusIndexer prepare()
-        throws Exception, IOException, UnsupportedExistingLuceneIndexException
+    private Indexer prepare()
+        throws Exception, IOException
     {
-        NexusIndexer indexer = lookup( NexusIndexer.class );
+        Indexer indexer = lookup( Indexer.class );
 
         // Directory indexDir = new RAMDirectory();
         File indexDir = super.getDirectory( "index/test" );
@@ -626,7 +622,7 @@ public class NexusIndexerTest
         return indexer;
     }
 
-    // private void printDocs(NexusIndexer nexus) throws IOException
+    // private void printDocs(Indexer nexus) throws IOException
     // {
     // IndexingContext context = nexus.getIndexingContexts().get("test");
     // IndexReader reader = context.getIndexSearcher().getIndexReader();

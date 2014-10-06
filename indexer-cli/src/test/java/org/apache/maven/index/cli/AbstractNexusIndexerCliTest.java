@@ -25,11 +25,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Random;
 import org.apache.lucene.search.Query;
-import org.apache.maven.index.FlatSearchRequest;
-import org.apache.maven.index.FlatSearchResponse;
-import org.apache.maven.index.MAVEN;
-import org.apache.maven.index.NexusIndexer;
-import org.apache.maven.index.SearchType;
+import org.apache.maven.index.*;
 import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
 import org.codehaus.plexus.ContainerConfiguration;
@@ -237,30 +233,22 @@ public abstract class AbstractNexusIndexerCliTest
         throws Exception
     {
         IndexingContext context = null;
-        NexusIndexer indexer = lookup( NexusIndexer.class );
-        try
-        {
-            List<IndexCreator> indexCreators = getContainer().lookupList( IndexCreator.class );
+        Indexer indexer = lookup( Indexer.class );
 
-            context =
-                indexer.addIndexingContext( "index", "index", new File( TEST_REPO ), new File( indexDir ), null, null,
-                                            indexCreators );
+        List<IndexCreator> indexCreators = getContainer().lookupList( IndexCreator.class );
 
-            assertFalse( "No index file was generated", new File( indexDir ).list().length == 0 );
+        context =
+            indexer.addIndexingContext( "index", "index", new File( TEST_REPO ), new File( indexDir ), null, null,
+                                        indexCreators );
 
-            Query query = indexer.constructQuery( MAVEN.GROUP_ID, "ch.marcus-schulte.maven", SearchType.SCORED );
+        assertFalse( "No index file was generated", new File( indexDir ).list().length == 0 );
 
-            FlatSearchRequest request = new FlatSearchRequest( query );
-            FlatSearchResponse response = indexer.searchFlat( request );
-            assertEquals( response.getResults().toString(), 1, response.getTotalHits() );
-        }
-        finally
-        {
-            if ( context != null )
-            {
-                indexer.removeIndexingContext( context, true );
-            }
-        }
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, "ch.marcus-schulte.maven", SearchType.SCORED );
+
+        FlatSearchRequest request = new FlatSearchRequest( query );
+        FlatSearchResponse response = indexer.searchFlat( request );
+
+        assertEquals( response.getResults().toString(), 1, response.getTotalHits() );
     }
 
     protected abstract int execute( String... args );

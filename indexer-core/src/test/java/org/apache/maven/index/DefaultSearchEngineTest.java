@@ -80,7 +80,7 @@ public class DefaultSearchEngineTest
     }
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareNexusIndexer( Indexer indexer )
         throws Exception
     {
         File repo = new File( getBasedir(), "src/test/repo" );
@@ -88,7 +88,7 @@ public class DefaultSearchEngineTest
             new CountingIndexingContext( "test-minimal", "test", repo, indexDir, null, null,
                                          IndexCreatorSorter.sort( MIN_CREATORS ), false );
 
-        nexusIndexer.scan( context );
+        indexer.scan( context );
     }
 
     private SearchEngine searchEngine;
@@ -113,7 +113,7 @@ public class DefaultSearchEngineTest
     public void testExceptionInArtifactFilter()
         throws Exception
     {
-        Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "com.adobe.flexunit", SearchType.EXACT );
+        Query q = indexer.constructQuery( MAVEN.GROUP_ID, "com.adobe.flexunit", SearchType.EXACT );
         IteratorSearchRequest request = new IteratorSearchRequest( q );
         request.setArtifactInfoFilter( new ArtifactInfoFilter()
         {

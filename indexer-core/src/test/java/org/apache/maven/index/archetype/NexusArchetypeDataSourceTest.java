@@ -20,13 +20,11 @@ package org.apache.maven.index.archetype;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.RAMDirectory;
 import org.apache.maven.archetype.catalog.ArchetypeCatalog;
 import org.apache.maven.index.AbstractIndexCreatorHelper;
 import org.apache.maven.index.Indexer;
@@ -37,7 +35,7 @@ public class NexusArchetypeDataSourceTest
 {
     private IndexingContext context;
 
-    private Indexer nexusIndexer;
+    private Indexer indexer;
 
     // private IndexUpdater indexUpdater;
 
@@ -54,7 +52,7 @@ public class NexusArchetypeDataSourceTest
     private void prepare()
         throws Exception
     {
-        nexusIndexer = lookup( Indexer.class );
+        indexer = lookup( Indexer.class );
 
         Directory indexDir = null;
 
@@ -67,16 +65,16 @@ public class NexusArchetypeDataSourceTest
         File repo = new File( getBasedir(), "src/test/repo" );
 
         context =
-            nexusIndexer.createIndexingContext( "test", "public", repo, indexDir,
+            indexer.createIndexingContext( "test", "public", repo, indexDir,
                                                 "http://repository.sonatype.org/content/groups/public/", null,
                                                 true, true, DEFAULT_CREATORS );
-        nexusIndexer.scan( context );
+        indexer.scan( context );
 
         // to update, uncomment this
         // IndexUpdateRequest updateRequest = new IndexUpdateRequest( context );
         // indexUpdater.fetchAndUpdateIndex( updateRequest );
 
-        nexusArchetypeDataSource = new AbstractArchetypeDataSource(nexusIndexer)
+        nexusArchetypeDataSource = new AbstractArchetypeDataSource( indexer )
         {
             @Override
             protected List<IndexingContext> getIndexingContexts()

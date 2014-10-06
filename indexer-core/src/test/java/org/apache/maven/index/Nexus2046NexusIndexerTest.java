@@ -32,12 +32,12 @@ public class Nexus2046NexusIndexerTest
     protected File repo = new File( getBasedir(), "src/test/nexus-2046" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         context =
-            nexusIndexer.addIndexingContext( "nexus-2046", "nexus-2046", repo, indexDir, null, null, DEFAULT_CREATORS );
-        nexusIndexer.scan( context );
+            indexer.addIndexingContext( "nexus-2046", "nexus-2046", repo, indexDir, null, null, DEFAULT_CREATORS );
+        indexer.scan( context );
     }
 
     public void testSearchFlat()
@@ -45,8 +45,8 @@ public class Nexus2046NexusIndexerTest
     {
         // Since 4.0 the original query become illegal
         // Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "*", SearchType.SCORED );
-        Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "org.maven.ide", SearchType.SCORED );
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q ) );
+        Query q = indexer.constructQuery( MAVEN.GROUP_ID, "org.maven.ide", SearchType.SCORED );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
         Collection<ArtifactInfo> r = response.getResults();
 
         assertEquals( 1, r.size() );

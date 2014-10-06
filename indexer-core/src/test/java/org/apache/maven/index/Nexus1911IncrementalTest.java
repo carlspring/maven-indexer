@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.FileUtils;
 public class Nexus1911IncrementalTest
     extends AbstractIndexCreatorHelper
 {
-    NexusIndexer indexer;
+    Indexer indexer;
 
     IndexingContext context;
 
@@ -57,7 +57,7 @@ public class Nexus1911IncrementalTest
     {
         super.setUp();
 
-        indexer = lookup( NexusIndexer.class );
+        indexer = lookup( Indexer.class );
         packer = lookup( IndexPacker.class );
 
         indexDir = super.getDirectory( "index/nexus-1911" );
@@ -79,7 +79,6 @@ public class Nexus1911IncrementalTest
     protected void tearDown()
         throws Exception
     {
-        indexer.removeIndexingContext( context, true );
         super.deleteDirectory( this.reposTargetDir );
         super.deleteDirectory( this.indexDir );
         super.deleteDirectory( this.indexPackDir );

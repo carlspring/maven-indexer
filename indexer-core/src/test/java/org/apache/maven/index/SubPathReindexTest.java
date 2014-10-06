@@ -29,12 +29,12 @@ public class SubPathReindexTest
     protected File repo = new File( getBasedir(), "src/test/repo" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
-        context = nexusIndexer.addIndexingContext( "test-minimal", "test", repo, indexDir, null, null, MIN_CREATORS );
+        context = indexer.addIndexingContext( "test-minimal", "test", repo, indexDir, null, null, MIN_CREATORS );
 
-        nexusIndexer.scan( context, "/org/slf4j/slf4j-api", null, false );
+        indexer.scan( context, "/org/slf4j/slf4j-api", null, false );
     }
 
     public void testRootGroups()
@@ -83,14 +83,14 @@ public class SubPathReindexTest
         // Using a file: this one should be unknown
         artifact = new File( repo, "qdox/qdox/1.5/qdox-1.5.jar" );
 
-        ais = nexusIndexer.identify( artifact );
+        ais = indexer.identify( artifact );
 
         assertTrue( "Should not be able to identify it!", ais.isEmpty() );
 
         // Using a file: this one should be known
         artifact = new File( repo, "org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar" );
 
-        ais = nexusIndexer.identify( artifact );
+        ais = indexer.identify( artifact );
 
         assertEquals( "Should not be able to identify it!", 1, ais.size() );
     }

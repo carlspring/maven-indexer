@@ -23,7 +23,6 @@ import java.util.Arrays;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.maven.index.context.DefaultIndexingContext;
 import org.apache.maven.index.context.IndexingContext;
 
 /**
@@ -44,29 +43,29 @@ public class ConcurrentUseWithMergedContextTest
     protected IndexingContext context2;
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer(Indexer indexer)
         throws Exception
     {
         context1 =
-            nexusIndexer.addIndexingContext( "test-default-member1", "test1", repo, indexDir1, null, null,
+            indexer.addIndexingContext( "test-default-member1", "test1", repo, indexDir1, null, null,
                 DEFAULT_CREATORS );
 
-        nexusIndexer.scan( context1 );
+        indexer.scan( context1 );
 
         context2 =
-            nexusIndexer.addIndexingContext( "test-default-member2", "test2", repo, indexDir2, null, null,
+            indexer.addIndexingContext( "test-default-member2", "test2", repo, indexDir2, null, null,
                 DEFAULT_CREATORS );
 
-        nexusIndexer.scan( context2 );
+        indexer.scan( context2 );
 
         context =
-            nexusIndexer.addMergedIndexingContext( "test-default", "test", repo, indexDir, true,
+            indexer.addMergedIndexingContext( "test-default", "test", repo, indexDir, true,
                 Arrays.asList( context1, context2 ) );
 
         // Group contexts are known, they inherit member timestamp and they are scanned already
         // assertNull( context.getTimestamp() ); // unknown upon creation
 
-        // nexusIndexer.scan( context );
+        // indexer.scan( context );
 
         assertNotNull( context.getTimestamp() );
     }
@@ -75,6 +74,6 @@ public class ConcurrentUseWithMergedContextTest
     protected IndexUserThread createThread( final ArtifactInfo ai )
     {
         // we search the merged one and modify one member context concurrently
-        return new IndexUserThread( this, nexusIndexer, context, context1, ai );
+        return new IndexUserThread( this, indexer, context, context1, ai );
     }
 }

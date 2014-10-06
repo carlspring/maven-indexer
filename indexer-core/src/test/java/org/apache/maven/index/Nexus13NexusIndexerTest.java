@@ -19,8 +19,6 @@ package org.apache.maven.index;
  * under the License.
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +33,6 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.maven.index.context.IndexingContext;
-import org.apache.maven.index.packer.DefaultIndexPacker;
 import org.apache.maven.index.packer.IndexPacker;
 import org.apache.maven.index.packer.IndexPackingRequest;
 import org.apache.maven.index.search.grouping.GAGrouping;
@@ -50,21 +47,21 @@ public class Nexus13NexusIndexerTest
     protected File repo = new File( getBasedir(), "src/test/nexus-13" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
-        context = nexusIndexer.addIndexingContext( "nexus-13", "nexus-13", repo, indexDir, null, null, FULL_CREATORS );
-        nexusIndexer.scan( context );
+        context = indexer.addIndexingContext( "nexus-13", "nexus-13", repo, indexDir, null, null, FULL_CREATORS );
+        indexer.scan( context );
     }
 
     public void testSearchGroupedClasses()
         throws Exception
     {
         {
-            Query q = nexusIndexer.constructQuery( MAVEN.CLASSNAMES, "cisco", SearchType.SCORED );
+            Query q = indexer.constructQuery( MAVEN.CLASSNAMES, "cisco", SearchType.SCORED );
 
             GroupedSearchRequest request = new GroupedSearchRequest( q, new GAGrouping() );
-            GroupedSearchResponse response = nexusIndexer.searchGrouped( request );
+            GroupedSearchResponse response = indexer.searchGrouped( request );
             Map<String, ArtifactInfoGroup> r = response.getResults();
             assertEquals( r.toString(), 4, r.size() );
 
@@ -75,9 +72,9 @@ public class Nexus13NexusIndexerTest
         }
 
         {
-            Query q = nexusIndexer.constructQuery( MAVEN.CLASSNAMES, "dft.plugin.utils", SearchType.SCORED );
+            Query q = indexer.constructQuery( MAVEN.CLASSNAMES, "dft.plugin.utils", SearchType.SCORED );
             GroupedSearchRequest request = new GroupedSearchRequest( q, new GAGrouping() );
-            GroupedSearchResponse response = nexusIndexer.searchGrouped( request );
+            GroupedSearchResponse response = indexer.searchGrouped( request );
             Map<String, ArtifactInfoGroup> r = response.getResults();
             assertEquals( r.toString(), 1, r.size() );
 
@@ -98,7 +95,7 @@ public class Nexus13NexusIndexerTest
 
         Query q = new TermQuery( new Term( ArtifactInfo.PACKAGING, "maven-archetype" ) );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
         Collection<ArtifactInfo> r = response.getResults();
         assertEquals( r.toString(), 1, r.size() );
 
@@ -133,7 +130,7 @@ public class Nexus13NexusIndexerTest
         Directory indexDir = new RAMDirectory();
 
         IndexingContext newContext =
-            nexusIndexer.addIndexingContext( "test-new", "nexus-13", null, indexDir, null, null, DEFAULT_CREATORS );
+            indexer.addIndexingContext( "test-new", "nexus-13", null, indexDir, null, null, DEFAULT_CREATORS );
 
         final IndexUpdater indexUpdater = lookup( IndexUpdater.class );
         final IndexUpdateRequest updateRequest = new IndexUpdateRequest( newContext, new DefaultIndexUpdater.FileFetcher( targetDir ) );
@@ -145,9 +142,9 @@ public class Nexus13NexusIndexerTest
 
         // make sure context has the same artifacts
 
-        Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "cisco", SearchType.SCORED );
+        Query q = indexer.constructQuery( MAVEN.GROUP_ID, "cisco", SearchType.SCORED );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q, newContext ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q, newContext ) );
         Collection<ArtifactInfo> r = response.getResults();
 
         assertEquals( 10, r.size() );
@@ -181,9 +178,9 @@ public class Nexus13NexusIndexerTest
     public void testSearchFlat()
         throws Exception
     {
-        Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "cisco.infra", SearchType.SCORED );
+        Query q = indexer.constructQuery( MAVEN.GROUP_ID, "cisco.infra", SearchType.SCORED );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
         Collection<ArtifactInfo> r = response.getResults();
         assertEquals( r.toString(), 10, r.size() );
 
@@ -207,10 +204,10 @@ public class Nexus13NexusIndexerTest
         // ----------------------------------------------------------------------------
         //
         // ----------------------------------------------------------------------------
-        Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "cisco.infra", SearchType.SCORED );
+        Query q = indexer.constructQuery( MAVEN.GROUP_ID, "cisco.infra", SearchType.SCORED );
 
         GroupedSearchRequest request = new GroupedSearchRequest( q, new GAGrouping() );
-        GroupedSearchResponse response = nexusIndexer.searchGrouped( request );
+        GroupedSearchResponse response = indexer.searchGrouped( request );
         Map<String, ArtifactInfoGroup> r = response.getResults();
         assertEquals( 8, r.size() );
 
@@ -237,10 +234,10 @@ public class Nexus13NexusIndexerTest
         // Artifacts with "problematic" names
         // ----------------------------------------------------------------------------
 
-        Query q = nexusIndexer.constructQuery( MAVEN.ARTIFACT_ID, "dma.integr*", SearchType.SCORED );
+        Query q = indexer.constructQuery( MAVEN.ARTIFACT_ID, "dma.integr*", SearchType.SCORED );
 
         GroupedSearchRequest request = new GroupedSearchRequest( q, new GAGrouping() );
-        GroupedSearchResponse response = nexusIndexer.searchGrouped( request );
+        GroupedSearchResponse response = indexer.searchGrouped( request );
         Map<String, ArtifactInfoGroup> r = response.getResults();
 
         assertEquals( 1, r.size() );
@@ -255,7 +252,7 @@ public class Nexus13NexusIndexerTest
     public void testIdentify()
         throws Exception
     {
-        Collection<ArtifactInfo> ais = nexusIndexer.identify( MAVEN.SHA1, "c8a2ef9d92a4b857eae0f36c2e01481787c5cbf8" );
+        Collection<ArtifactInfo> ais = indexer.identify( MAVEN.SHA1, "c8a2ef9d92a4b857eae0f36c2e01481787c5cbf8" );
 
         assertEquals( 1, ais.size() );
 
@@ -275,7 +272,7 @@ public class Nexus13NexusIndexerTest
             new File( repo,
                 "cisco/infra/dft/maven-dma-mgmt-plugin/1.0-SNAPSHOT/maven-dma-mgmt-plugin-1.0-20080409.022326-2.jar" );
 
-        ais = nexusIndexer.identify( artifact );
+        ais = indexer.identify( artifact );
         
         assertEquals( 1, ais.size() );
 

@@ -46,23 +46,23 @@ public class DuplicateSearchTest
     protected Directory contextDir2 = new RAMDirectory();
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         // we have a context with ID "repo1-ctx" that contains index of repository with ID "repo1"
-        context = nexusIndexer.addIndexingContext( "repo1-ctx", "repo1", repo, indexDir, null, null, FULL_CREATORS );
+        context = indexer.addIndexingContext( "repo1-ctx", "repo1", repo, indexDir, null, null, FULL_CREATORS );
         // we have a context with ID "repo2-ctx" that contains index of repository with ID "repo2"
-        context1 = nexusIndexer.addIndexingContext( "repo2-ctx", "repo2", repo, contextDir1, null, null, FULL_CREATORS );
+        context1 = indexer.addIndexingContext( "repo2-ctx", "repo2", repo, contextDir1, null, null, FULL_CREATORS );
         // we have a context with ID "repo3-ctx" that contains index of repository with ID "repo2"
-        context2 = nexusIndexer.addIndexingContext( "repo3-ctx", "repo2", repo, contextDir2, null, null, FULL_CREATORS );
+        context2 = indexer.addIndexingContext( "repo3-ctx", "repo2", repo, contextDir2, null, null, FULL_CREATORS );
 
         // note: those three contexts, while representing different entities are actually indexing the same repository
         // directory, hence, will have exactly same content! Also, context1 and context2 do say, they both index
         // repository with ID "repo2"!
 
-        nexusIndexer.scan( context );
-        nexusIndexer.scan( context1 );
-        nexusIndexer.scan( context2 );
+        indexer.scan( context );
+        indexer.scan( context1 );
+        indexer.scan( context2 );
 
         assertNotNull( context.getTimestamp() );
         assertNotNull( context1.getTimestamp() );
@@ -130,13 +130,13 @@ public class DuplicateSearchTest
         // undone)
         // because after removing it, we still dont have GAV dupes in results, here is a proof:
 
-        Query query = nexusIndexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.slf4j" ) );
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.slf4j" ) );
         FlatSearchRequest fsReq = new FlatSearchRequest( query );
         fsReq.getContexts().add( context );
         fsReq.getContexts().add( context1 );
         fsReq.getContexts().add( context2 );
 
-        FlatSearchResponse fsResp = nexusIndexer.searchFlat( fsReq );
+        FlatSearchResponse fsResp = indexer.searchFlat( fsReq );
 
         Assert.assertEquals( "We have 10 GAVs coming from three contextes", 10, fsResp.getResults().size() );
 
@@ -151,7 +151,7 @@ public class DuplicateSearchTest
         // my use case: I am searching for duplicates in given two contexts belonging to given groupId "org.slf4j"
         // I expect to find intersection of two reposes, since both of those indexes/reposes contains that
 
-        Query query = nexusIndexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.slf4j" ) );
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.slf4j" ) );
 
         FlatSearchRequest fsReq = new FlatSearchRequest( query );
         fsReq.setArtifactInfoComparator( ArtifactInfo.CONTEXT_VERSION_COMPARATOR );
@@ -159,7 +159,7 @@ public class DuplicateSearchTest
         fsReq.getContexts().add( context1 );
         fsReq.getContexts().add( context2 );
 
-        FlatSearchResponse fsResp = nexusIndexer.searchFlat( fsReq );
+        FlatSearchResponse fsResp = indexer.searchFlat( fsReq );
 
         Assert.assertEquals( "We have 10 GAVs coming from three contextes, it is 30", 30, fsResp.getResults().size() );
 
@@ -175,7 +175,7 @@ public class DuplicateSearchTest
         // my use case: searching across multiple contexts, querying how many combinations of GAs exists in groupId
         // "org.slf4j".
 
-        Query query = nexusIndexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.slf4j" ) );
+        Query query = indexer.constructQuery( MAVEN.GROUP_ID, new SourcedSearchExpression( "org.slf4j" ) );
 
         IteratorSearchRequest isReq = new IteratorSearchRequest( query );
 
@@ -197,7 +197,7 @@ public class DuplicateSearchTest
 
         try
         {
-            isResp = nexusIndexer.searchIterator( isReq );
+            isResp = indexer.searchIterator( isReq );
 
             // consume the iterator to count actual result set size
             for ( ArtifactInfo ai : isResp )

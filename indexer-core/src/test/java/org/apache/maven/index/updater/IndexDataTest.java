@@ -35,10 +35,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.maven.index.AbstractRepoNexusIndexerTest;
 import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.NexusIndexer;
+import org.apache.maven.index.Indexer;
 import org.apache.maven.index.context.IndexUtils;
-import org.apache.maven.index.updater.DefaultIndexUpdater;
-import org.apache.maven.index.updater.IndexDataWriter;
 
 /**
  * @author Eugene Kuleshov
@@ -49,17 +47,17 @@ public class IndexDataTest
     private Directory newDir;
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         indexDir = new RAMDirectory();
 
         context =
-            nexusIndexer.addIndexingContext( "test-default", "test", repo, indexDir, null, null, DEFAULT_CREATORS );
+            indexer.addIndexingContext( "test-default", "test", repo, indexDir, null, null, DEFAULT_CREATORS );
 
         // assertNull( context.getTimestamp() ); // unknown upon creation
 
-        nexusIndexer.scan( context );
+        indexer.scan( context );
 
         Date timestamp = context.getTimestamp();
 
@@ -96,7 +94,7 @@ public class IndexDataTest
         indexDir = new RAMDirectory();
 
         context =
-            nexusIndexer.addIndexingContext( "test-default", "test", repo, indexDir, null, null, DEFAULT_CREATORS );
+            indexer.addIndexingContext( "test-default", "test", repo, indexDir, null, null, DEFAULT_CREATORS );
 
         assertNull( context.getTimestamp() ); // unknown upon creation
 

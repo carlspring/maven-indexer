@@ -34,20 +34,20 @@ public class Mindexer35NexusIndexerTest
     protected File repo = new File( getBasedir(), "src/test/mindexer-35" );
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         context =
-            nexusIndexer.addIndexingContext( "mindexer-35", "mindexer-35", repo, indexDir, null, null, FULL_CREATORS );
-        nexusIndexer.scan( context );
+            indexer.addIndexingContext( "mindexer-35", "mindexer-35", repo, indexDir, null, null, FULL_CREATORS );
+        indexer.scan( context );
     }
 
     public void testSearchWar()
         throws Exception
     {
-        Query q = nexusIndexer.constructQuery( MAVEN.CLASSNAMES, new UserInputSearchExpression( "WebappClass" ) );
+        Query q = indexer.constructQuery( MAVEN.CLASSNAMES, new UserInputSearchExpression( "WebappClass" ) );
         
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
         
         Collection<ArtifactInfo> r = response.getResults();
 

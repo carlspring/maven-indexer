@@ -22,9 +22,6 @@ package org.apache.maven.index;
 import java.util.Set;
 
 import org.apache.lucene.search.Query;
-import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.FlatSearchRequest;
-import org.apache.maven.index.FlatSearchResponse;
 import org.apache.maven.index.NexusIndexer;
 
 /**
@@ -35,20 +32,20 @@ public class MinimalIndexNexusIndexerTest
     extends AbstractRepoNexusIndexerTest
 {
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
-        context = nexusIndexer.addIndexingContext( "test-minimal", "test", repo, indexDir, null, null, MIN_CREATORS );
+        context = indexer.addIndexingContext( "test-minimal", "test", repo, indexDir, null, null, MIN_CREATORS );
 
-        nexusIndexer.scan( context );
+        indexer.scan( context );
     }
 
     public void testNEXUS2712()
         throws Exception
     {
-        Query q = nexusIndexer.constructQuery( MAVEN.GROUP_ID, "com.adobe.flexunit", SearchType.EXACT );// WAS SCORED
+        Query q = indexer.constructQuery( MAVEN.GROUP_ID, "com.adobe.flexunit", SearchType.EXACT );// WAS SCORED
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( new FlatSearchRequest( q ) );
+        FlatSearchResponse response = indexer.searchFlat( new FlatSearchRequest( q ) );
 
         Set<ArtifactInfo> r = response.getResults();
 

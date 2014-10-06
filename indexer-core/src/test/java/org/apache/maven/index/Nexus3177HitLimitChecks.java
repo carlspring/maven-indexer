@@ -38,27 +38,18 @@ public class Nexus3177HitLimitChecks
     protected IndexingContext secondContext;
 
     @Override
-    protected void prepareNexusIndexer( NexusIndexer nexusIndexer )
+    protected void prepareIndexer( Indexer indexer )
         throws Exception
     {
         context =
-            nexusIndexer.addIndexingContext( "nexus-3177", "nexus-3177", repo, indexDir, null, null, DEFAULT_CREATORS );
+            indexer.addIndexingContext( "nexus-3177", "nexus-3177", repo, indexDir, null, null, DEFAULT_CREATORS );
 
         secondContext =
-            nexusIndexer.addIndexingContext( "nexus-3177b", "nexus-3177b", repo, secondIndexDir, null, null,
+            indexer.addIndexingContext( "nexus-3177b", "nexus-3177b", repo, secondIndexDir, null, null,
                 DEFAULT_CREATORS );
 
-        nexusIndexer.scan( context );
-        nexusIndexer.scan( secondContext );
-    }
-
-    @Override
-    protected void unprepareNexusIndexer( NexusIndexer nexusIndexer )
-        throws Exception
-    {
-        super.unprepareNexusIndexer( nexusIndexer );
-
-        nexusIndexer.removeIndexingContext( secondContext, false );
+        indexer.scan( context );
+        indexer.scan( secondContext );
     }
 
     // ===================================================================
@@ -79,7 +70,7 @@ public class Nexus3177HitLimitChecks
         // request.setResultHitLimit( 5 );
         request.getContexts().add( context );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( request );
+        FlatSearchResponse response = indexer.searchFlat( request );
         Set<ArtifactInfo> r = response.getResults();
         assertEquals( r.toString(), 4, r.size() );
         assertEquals( r.toString(), 4, response.getTotalHitsCount() );
@@ -95,7 +86,7 @@ public class Nexus3177HitLimitChecks
         // request.setResultHitLimit( 4 );
         request.getContexts().add( context );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( request );
+        FlatSearchResponse response = indexer.searchFlat( request );
         Set<ArtifactInfo> r = response.getResults();
         assertEquals( r.toString(), 4, r.size() );
         assertEquals( r.toString(), 4, response.getTotalHitsCount() );
@@ -111,7 +102,7 @@ public class Nexus3177HitLimitChecks
     // request.setResultHitLimit( 3 );
     // request.getContexts().add( context );
     //
-    // FlatSearchResponse response = nexusIndexer.searchFlat( request );
+    // FlatSearchResponse response = indexer.searchFlat( request );
     // Set<ArtifactInfo> r = response.getResults();
     // assertEquals( r.toString(), 0, r.size() );
     // assertEquals( r.toString(), AbstractSearchResponse.LIMIT_EXCEEDED, response.getTotalHits() );
@@ -129,7 +120,7 @@ public class Nexus3177HitLimitChecks
         request.getContexts().add( context );
         request.getContexts().add( secondContext );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( request );
+        FlatSearchResponse response = indexer.searchFlat( request );
         Set<ArtifactInfo> r = response.getResults();
         assertEquals( r.toString(), 8, r.size() );
         assertEquals( r.toString(), 8, response.getTotalHitsCount() );
@@ -147,7 +138,7 @@ public class Nexus3177HitLimitChecks
         request.getContexts().add( context );
         request.getContexts().add( secondContext );
 
-        FlatSearchResponse response = nexusIndexer.searchFlat( request );
+        FlatSearchResponse response = indexer.searchFlat( request );
         Set<ArtifactInfo> r = response.getResults();
         assertEquals( r.toString(), 8, r.size() );
         assertEquals( r.toString(), 8, response.getTotalHitsCount() );
@@ -165,7 +156,7 @@ public class Nexus3177HitLimitChecks
     // request.getContexts().add( context );
     // request.getContexts().add( secondContext );
     //
-    // FlatSearchResponse response = nexusIndexer.searchFlat( request );
+    // FlatSearchResponse response = indexer.searchFlat( request );
     // Set<ArtifactInfo> r = response.getResults();
     // assertEquals( r.toString(), 0, r.size() );
     // assertEquals( r.toString(), AbstractSearchResponse.LIMIT_EXCEEDED, response.getTotalHits() );
