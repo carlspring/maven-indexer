@@ -19,17 +19,16 @@ package org.apache.maven.index.archetype;
  * under the License.
  */
 
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Inject;
+
 import org.apache.lucene.search.Query;
 import org.apache.maven.archetype.catalog.Archetype;
 import org.apache.maven.archetype.catalog.ArchetypeCatalog;
-import org.apache.maven.archetype.source.ArchetypeDataSource;
-import org.apache.maven.archetype.source.ArchetypeDataSourceException;
 import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.FlatSearchRequest;
 import org.apache.maven.index.FlatSearchResponse;
@@ -40,8 +39,11 @@ import org.apache.maven.index.expr.SourcedSearchExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Support class to implement {@code org.apache.maven.archetype.source.ArchetypeDataSource} interface. Extend this class
+ * to suit your needs.
+ */
 public abstract class AbstractArchetypeDataSource
-    implements ArchetypeDataSource
 {
 
     private final Logger logger = LoggerFactory.getLogger( getClass() );
@@ -61,13 +63,13 @@ public abstract class AbstractArchetypeDataSource
     }
 
     public ArchetypeCatalog getArchetypeCatalog( final Properties properties )
-        throws ArchetypeDataSourceException
     {
         final ArchetypeCatalog catalog = new ArchetypeCatalog();
         try
         {
             final Map<String, String> repositories = getRepositoryMap();
-            final Query pq = indexer.constructQuery( MAVEN.PACKAGING, new SourcedSearchExpression( "maven-archetype" ) );
+            final Query pq =
+                indexer.constructQuery( MAVEN.PACKAGING, new SourcedSearchExpression( "maven-archetype" ) );
             final FlatSearchRequest searchRequest = new FlatSearchRequest( pq );
             searchRequest.setContexts( getIndexingContexts() );
             final FlatSearchResponse searchResponse = indexer.searchFlat( searchRequest );

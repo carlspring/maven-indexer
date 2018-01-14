@@ -1,19 +1,5 @@
 package org.apache.maven.index;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.lucene.search.Query;
-import org.apache.maven.index.context.ContextMemberProvider;
-import org.apache.maven.index.context.ExistingLuceneIndexMismatchException;
-import org.apache.maven.index.context.IndexCreator;
-import org.apache.maven.index.context.IndexingContext;
-import org.apache.maven.index.expr.SearchExpression;
-import org.apache.maven.index.expr.SourcedSearchExpression;
-import org.apache.maven.index.expr.UserInputSearchExpression;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -32,6 +18,18 @@ import org.apache.maven.index.expr.UserInputSearchExpression;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.lucene.search.Query;
+import org.apache.maven.index.context.ContextMemberProvider;
+import org.apache.maven.index.context.ExistingLuceneIndexMismatchException;
+import org.apache.maven.index.context.IndexCreator;
+import org.apache.maven.index.context.IndexingContext;
+import org.apache.maven.index.expr.SearchExpression;
 
 /**
  * Indexer component. It is the main component of Maven Indexer, offering {@link IndexingContext} creation and close
@@ -107,6 +105,16 @@ public interface Indexer
     // ----------------------------------------------------------------------------
     // Modifying
     // ----------------------------------------------------------------------------
+
+    /**
+     * Adds the passed in artifact contexts to passed in indexing context.
+     *
+     * @param ac
+     * @param context
+     * @throws IOException
+     */
+    void addArtifactToIndex( ArtifactContext ac, IndexingContext context )
+        throws IOException;
 
     /**
      * Adds the passed in artifact contexts to passed in indexing context.
@@ -204,10 +212,23 @@ public interface Indexer
      * @param expression
      * @return the query to be used for search.
      * @see SearchExpression
-     * @see UserInputSearchExpression
-     * @see SourcedSearchExpression
+     * @see org.apache.maven.index.expr.UserInputSearchExpression
+     * @see org.apache.maven.index.expr.SourcedSearchExpression
      * @throws IllegalArgumentException
      */
     Query constructQuery( Field field, SearchExpression expression )
+        throws IllegalArgumentException;
+
+    /**
+     * Helper method to construct Lucene query for given field without need for knowledge (on caller side) HOW is a
+     * field indexed, and WHAT query is needed to achieve that search.
+     *
+     * @param field
+     * @param expression
+     * @param searchType
+     * @return
+     * @throws IllegalArgumentException
+     */
+    Query constructQuery( Field field, String expression, SearchType searchType )
         throws IllegalArgumentException;
 }

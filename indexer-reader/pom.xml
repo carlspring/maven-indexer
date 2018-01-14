@@ -17,14 +17,13 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.maven.indexer</groupId>
     <artifactId>maven-indexer</artifactId>
-    <version>6.0-SNAPSHOT</version>
+    <version>6.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>indexer-reader</artifactId>
@@ -32,9 +31,9 @@ under the License.
 
   <name>Maven :: Indexer Reader</name>
   <description>
-    Indexer Reader is a minimal dep-less library that is able to read published (remote) index with incremental update
+    Indexer Reader is a dependency-less library that is able to read published (remote) index with incremental update
     support, making user able to integrate published Maven Indexes into any engine without depending on
-    maven-indexer-core and it's transitive dependencies.
+    maven-indexer-core and its transitive dependencies.
   </description>
 
   <dependencies>
@@ -47,7 +46,6 @@ under the License.
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>18.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
