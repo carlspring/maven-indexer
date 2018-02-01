@@ -211,7 +211,7 @@ public class DefaultIndexUpdater
             else
             {
                 // legacy transfer format
-                throw new IllegalArgumentException( "The legacy format is no longer supported "
+                throw new LegacyFormatNotSupportedException( "The legacy format is no longer supported "
                     + "by this version of maven-indexer." );
             }
 
@@ -755,7 +755,7 @@ public class DefaultIndexUpdater
                 {
                     timestamp = target.setIndexFile( source, IndexingContext.INDEX_FILE_PREFIX + ".zip" );
                 }
-                catch ( IOException ex2 )
+                catch ( IOException | LegacyFormatNotSupportedException ex2 )
                 {
                     getLogger().error( "Fallback to *.zip also failed: " + ex2 ); // do not bother with stack trace
                     
