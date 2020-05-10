@@ -25,10 +25,15 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NexusIndexerCliIT
     extends AbstractNexusIndexerCliTest
 {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
 
     private StreamConsumer sout;
 
@@ -86,6 +91,7 @@ public class NexusIndexerCliIT
         }
         catch ( CommandLineException e )
         {
+            LOGGER.error("Failed to execute command: [{}]", cmd.toString(), e);
             return -1;
         }
     }
